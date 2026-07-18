@@ -2,16 +2,19 @@ import requests
 from bs4 import BeautifulSoup
 
 def clean_instagram_url(url: str) -> str | None:
-    """Limpia la URL y valida que corresponda a un perfil, no a una publicación."""
+    """Limpia la URL y valida que corresponda a un perfil, no a una publicación ni a la raíz."""
     if not url:
         return None
     
-    # Limpieza de parámetros de rastreo (?utm_source=...) y trailing slash
     clean_url = url.split('?')[0].rstrip('/')
     
-    # Evitar capturar enlaces que apunten a contenido en lugar del perfil principal
     invalid_paths = ['/p/', '/reel/', '/explore/', '/stories/', '/tags/', '/developer/']
     if any(path in clean_url for path in invalid_paths):
+        return None
+        
+    # Filtrar enlaces genéricos a la página principal de Instagram
+    generic_urls = ["https://instagram.com", "https://www.instagram.com", "http://instagram.com", "http://www.instagram.com"]
+    if clean_url in generic_urls:
         return None
         
     return clean_url if "instagram.com" in clean_url else None

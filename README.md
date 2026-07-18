@@ -35,3 +35,20 @@ Módulo de escaneo estático basado en `requests` y `BeautifulSoup`. Opera bajo 
 - Ejecuta peticiones HTTP con un timeout restrictivo (8 segundos) para evitar bloqueos por dominios inactivos.
 - Filtra rutas inválidas (`/p/`, `/reel/`) mediante la función `clean_instagram_url` para asegurar que el dato exportado es un perfil prospeccionable.
 
+### 3. Validación Social (`src/filters_ig.py`)
+Módulo crítico que evade el bloqueo de login de Instagram. 
+- Utiliza la técnica de *OpenGraph Spoofing* inyectando un `User-Agent` de Discordbot. 
+- Extrae pasivamente la etiqueta `<meta property="og:description">` para parsear la métrica de seguidores mediante expresiones regulares.
+- Implementa la función lógica de filtrado comercial (1,500 a 5,000 seguidores), priorizando cuentas con volumen suficiente para invertir, pero sin infraestructura in-house.
+
+### 4. Orquestación y Exportación (`main.py` y `src/exporter.py`)
+El archivo `main.py` controla el flujo asíncrono-síncrono. Pasa la matriz de leads crudos por los filtros de enriquecimiento y delega la serialización a `exporter.py`, el cual utiliza `pandas` para generar un CSV estructurado y ordenado por prioridad comercial.
+
+## Ejecución del Sistema
+
+Para ejecutar el pipeline completo, define tu query de búsqueda dentro del bloque `__main__` en `main.py` y ejecuta:
+
+```bash
+python main.py
+
+
